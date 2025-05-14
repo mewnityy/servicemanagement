@@ -160,12 +160,6 @@
         e.preventDefault();
     });
 
-    window.addEventListener('keydown', function(e) {
-        const forbidden = ['Escape', 'F11', 'F12'];
-        if (forbidden.includes(e.key) || (e.ctrlKey && (e.key === 'w' || e.key === 'r')) || (e.altKey && e.key === 'F4')) {
-            e.preventDefault();
-        }
-    });
 
     document.addEventListener('fullscreenchange', function() {
         if (!document.fullscreenElement && hasClicked) {
