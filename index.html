@@ -23,7 +23,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;900&display=swap" rel="stylesheet">
 
-  <style type="text/css">
+  <style>
     p { margin: 0; }
     *, *::before, *::after { box-sizing: border-box; }
 
@@ -45,7 +45,6 @@
       font-size: 24px;
       font-weight: 900;
       color: black;
-      line-height: 1;
       margin-bottom: 16px;
     }
 
@@ -53,7 +52,6 @@
       font-size: 16px;
       font-weight: 400;
       color: rgba(0, 0, 0, 0.5);
-      line-height: 1.25;
       margin-bottom: 16px;
     }
 
@@ -68,7 +66,6 @@
       padding: 0 24px;
       font-size: 16px;
       font-weight: 500;
-      line-height: 1;
       border-radius: 4px;
       margin: 4px;
       cursor: pointer;
@@ -90,14 +87,13 @@
       font-size: 16px;
       font-weight: 500;
       color: rgb(132, 94, 194);
-      line-height: 1;
       position: relative;
       margin-top: 16px;
     }
 
     a.overlay-link::before {
-      position: absolute;
       content: "";
+      position: absolute;
       height: calc(50% + 4px);
       width: calc(100% + 8px);
       bottom: -4px;
@@ -106,7 +102,6 @@
     }
 
     .overlay[hidden] { display: none; }
-
     .overlay {
       z-index: 2;
       display: flex;
@@ -123,7 +118,6 @@
       width: 100%;
       object-fit: cover;
     }
-
     video#video::-webkit-media-controls-enclosure {
       display: none !important;
     }
@@ -148,67 +142,38 @@
     <video id="video" src="media/video.mp4" loop></video>
   </div>
 
-  <script type="text/javascript">
+  <script>
     const video = document.getElementById("video");
     const overlay = document.getElementById("overlay");
-    const declineButton = document.getElementById("decline-button");
     const acceptButton = document.getElementById("accept-button");
+    const declineButton = document.getElementById("decline-button");
     const soglButton = document.getElementById("sogl");
-    let hasClicked;
-    
-    document.addEventListener('contextmenu', function(e) {
-        e.preventDefault();
-    });
-
-    window.addEventListener('keydown', function(e) {
-        const forbidden = ['Escape', 'F11', 'F12'];
-        if (forbidden.includes(e.key) || (e.ctrlKey && (e.key === 'w' || e.key === 'r')) || (e.altKey && e.key === 'F4')) {
-            e.preventDefault();
-        }
-    });
-
-    document.addEventListener('fullscreenchange', function() {
-        if (!document.fullscreenElement && hasClicked) {
-            requestFullScreen();
-        }
-    });
-
-    window.onbeforeunload = function(event) {
-        if (hasClicked) {
-            event.preventDefault();
-            event.returnValue = '';
-            return '';
-        }
-    };
+    let hasClicked = false;
 
     function requestFullScreen() {
-        const d = document.documentElement;
-        if (d.requestFullscreen) d.requestFullscreen();
-        else if (d.mozRequestFullScreen) d.mozRequestFullScreen();
-        else if (d.webkitRequestFullscreen) d.webkitRequestFullscreen();
-        else if (d.msRequestFullscreen) d.msRequestFullscreen();
+      const d = document.documentElement;
+      if (d.requestFullscreen) d.requestFullscreen();
+      else if (d.mozRequestFullScreen) d.mozRequestFullScreen();
+      else if (d.webkitRequestFullscreen) d.webkitRequestFullscreen();
+      else if (d.msRequestFullscreen) d.msRequestFullscreen();
     }
 
     function buttonClick(event) {
-        event.preventDefault();
-        if (!hasClicked) {
-            hasClicked = true;
-        }
-        overlay.hidden = true;
-        video.volume = 1;
-        video.play();
-        requestFullScreen();
-    }
-
-    function videoClick(event) {
-        if (event) event.preventDefault();
-        requestFullScreen();
+      event.preventDefault();
+      if (!hasClicked) hasClicked = true;
+      overlay.hidden = true;
+      video.volume = 1;
+      video.play();
+      requestFullScreen();
     }
 
     acceptButton.addEventListener("click", buttonClick);
     declineButton.addEventListener("click", buttonClick);
     soglButton.addEventListener("click", buttonClick);
-    video.addEventListener("click", videoClick);
+    video.addEventListener("click", () => {
+      if (!hasClicked) return;
+      requestFullScreen();
+    });
   </script>
 </body>
 </html>
